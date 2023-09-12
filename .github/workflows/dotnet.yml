@@ -12,9 +12,9 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.301
-    - name: Publish with dotnet
-      run: dotnet publish --configuration Release --output build
+        dotnet-version: 6.x
+    - name: Publish .NET Core Project
+      run: dotnet publish src/AuPointsCalc.csproj -c Release -o release --nologo
     - name: Deploy to Github Pages
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
