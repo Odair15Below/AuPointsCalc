@@ -9,7 +9,6 @@
 </MudPaper>
 
 <MudTabs Elevation="2" Rounded="true" @ref="tabs" ApplyEffectsToContainer="true" KeepPanelsAlive="true" PanelClass="pa-6">
-
     @foreach (var category in Categories)
     {
         <MudTabPanel Text="@category.Description" ID="@category.Description">
