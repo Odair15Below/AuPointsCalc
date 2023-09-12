@@ -20,10 +20,9 @@ jobs:
     - name: Add .nojekyll file
       run: touch release/wwwroot/.nojekyll
     - name: Deploy to Github Pages
-      uses: JamesIves/github-pages-deploy-action@releases/v3
+      uses: JamesIves/github-pages-deploy-action@v4
       with:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        BASE_BRANCH: master # The branch the action should deploy from.
-        BRANCH: gh-pages # The branch the action should deploy to.
-        FOLDER: release/wwwroot # The folder the action should deploy.
-        SINGLE_COMMIT: true
+        folder: release/wwwroot
+        branch: gh-pages # The branch the action should deploy to.
+        target-folder: wwwroot # The folder the action should deploy.
