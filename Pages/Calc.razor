@@ -1,0 +1,72 @@
+﻿@page "/calc"
+@using AuPointsCalc.Components
+@using AuPointsCalc.Model;
+
+@inject PointsCalculator pointsCalc;
+
+<MudPaper Class="pa-2 mb-2">
+    <MudText Typo="Typo.h6">Total: @Total</MudText>
+</MudPaper>
+
+<MudTabs Elevation="2" Rounded="true" @ref="tabs" ApplyEffectsToContainer="true" KeepPanelsAlive="true" PanelClass="pa-6">
+
+    @foreach (var category in Categories)
+    {
+        <MudTabPanel Text="@category.Description" ID="@category.Description">
+            <MudGrid Spacing="0" Class="mb-4">
+                <MudItem Class="pr-2">
+                    <MudText Typo="Typo.body1" >@category.HeadlineQuestion</MudText>
+                </MudItem>
+                @if (category.Requirements.Count > 0)
+                {
+                    <MudItem>
+                        <MudButton Variant="Variant.Text"
+                           Style="text-transform: lowercase; text-decoration: underline; cursor: pointer;"
+                           Size="Size.Small"
+                           Color="Color.Info"
+                           Class="ma-0 pa-0"
+                           OnClick="e => OnButtonClicked(category.Requirements)">
+                            requirements
+                        </MudButton>
+                    </MudItem>
+                }
+            </MudGrid>
+            <OptionRadioGroup Category="@category" OnOptionSelected="SelectedCategoryOptionUpdate" />
+        </MudTabPanel>
+    }
+</MudTabs>
+
+@code {
+
+    [Inject] private IDialogService DialogService { get; set; }
+
+    MudTabs? tabs;
+    private List<Category> Categories = new();
+    private int Total = 0;
+    private int selectedTab = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Categories = pointsCalc.Categories;
+        await base.OnInitializedAsync();
+    }
+
+    protected void SelectedCategoryOptionUpdate(CategoryOptionCallBack callBack)
+    {
+        pointsCalc.SelectOptionForCategory(callBack.Category, callBack.Option);
+        Total = pointsCalc.Total;
+        if (tabs?.ActivePanelIndex < (tabs?.Panels.Count - 1))
+        {
+            tabs.ActivatePanel(tabs.ActivePanelIndex + 1);
+        }
+    }
+
+    private async void OnButtonClicked(IEnumerable<Requirement> requirements)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Requirements",
+            (MarkupString)string.Join("<br />", requirements.Select(r => " - " + r.Description)),
+            yesText: "OK");
+        StateHasChanged();
+    }
+}

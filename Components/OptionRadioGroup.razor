@@ -1,0 +1,57 @@
+﻿@using AuPointsCalc.Model;
+
+<MudGrid>
+    <MudRadioGroup T="Option" SelectedOptionChanged="s => OnSelectedOptionChanged(s)">
+        @foreach (var categoryOption in Category.Options)
+        {
+            <MudItem>
+                <MudRadio Option="@categoryOption">
+                    <MudText Typo="Typo.body2">
+                        @categoryOption.Description (@categoryOption.Points points)
+                    </MudText>
+                </MudRadio>
+                @if (categoryOption.Requirements.Count > 0)
+                {
+                    <MudButton 
+                       Variant="Variant.Text"
+                       Style="text-transform: lowercase; text-decoration: underline; cursor: pointer;"
+                       Size="Size.Small"
+                       Color="Color.Info"
+                       OnClick="e => OnButtonClicked(categoryOption.Requirements)" Class="ml-4">
+                        requirements
+                    </MudButton>
+                }
+
+            </MudItem>
+        }
+    </MudRadioGroup>
+</MudGrid>
+
+
+@code {
+
+    [Inject] private IDialogService DialogService { get; set; }
+
+    public Option? SelectedOption { get; set; } = null;
+
+    [Parameter]
+    public Category Category { get; set; }
+
+    [Parameter]
+    public EventCallback<CategoryOptionCallBack> OnOptionSelected { get; set; }
+
+    private async Task OnSelectedOptionChanged(Option selectedOption)
+    {
+        SelectedOption = selectedOption;
+        await OnOptionSelected.InvokeAsync(new CategoryOptionCallBack { Category = Category.Description, Option = selectedOption });
+    }
+
+    private async void OnButtonClicked(IEnumerable<Requirement> requirements)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Requirements",
+            (MarkupString)string.Join("<br />", requirements.Select(r => " - " + r.Description)),
+            yesText: "OK");
+        StateHasChanged();
+    }
+}
