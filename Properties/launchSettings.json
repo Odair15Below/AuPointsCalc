@@ -3,7 +3,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "https://localhost:44398/calc",
+      "launchUrl": "https://localhost:44398/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
